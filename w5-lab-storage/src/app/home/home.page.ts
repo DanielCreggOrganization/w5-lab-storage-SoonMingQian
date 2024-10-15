@@ -3,6 +3,8 @@ import { Storage } from '@ionic/storage-angular';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 
+import { StorageService } from '../services/storage.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -15,13 +17,12 @@ export class HomePage {
   value: string = '';
   output: string = '';
 
-  constructor(private storage: Storage) {
-    storage.create();
-  }
+  constructor(private storageService: StorageService) {}
+
 
   async setItem() {
     try {
-      await this.storage.set(this.key, this.value);
+      await this.storageService.set(this.key, this.value);
       this.output = `Set ${this.key} to ${this.value}`;
     } catch (error) {
       console.error('Error setting item', error);
@@ -31,7 +32,7 @@ export class HomePage {
 
   async getItem() {
     try {
-      const value = await this.storage.get(this.key);
+      const value = await this.storageService.get(this.key);
       this.output = `Got ${this.key} as ${value}`;
     } catch (error) {
       console.error('Error getting item', error);
@@ -41,7 +42,7 @@ export class HomePage {
 
   async removeItem() {
     try {
-      await this.storage.remove(this.key);
+      await this.storageService.remove(this.key);
       this.output = `Removed ${this.key}`;
     } catch (error) {
       console.error('Error removing item', error);
@@ -51,7 +52,7 @@ export class HomePage {
 
   async clear() {
     try {
-      await this.storage.clear();
+      await this.storageService.clear();
       this.output = 'Cleared storage';
     } catch (error) {
       console.error('Error clearing storage', error);
@@ -61,7 +62,7 @@ export class HomePage {
 
   async getKeys() {
     try {
-      const keys = await this.storage.keys();
+      const keys = await this.storageService.keys();
       this.output = `Keys: ${keys.join(', ')}`;
     } catch (error) {
       console.error('Error getting keys', error);
@@ -71,7 +72,7 @@ export class HomePage {
 
   async getLength() {
     try {
-      const length = await this.storage.length();
+      const length = await this.storageService.length();
       this.output = `Length: ${length}`;
     } catch (error) {
       console.error('Error getting length', error);
@@ -82,7 +83,7 @@ export class HomePage {
   async iterateItems() {
     try {
       let items = '';
-      await this.storage.forEach((value, key, index) => {
+      await this.storageService.forEach((value, key, index) => {
         items += `${index}: ${key} = ${value}\n`;
       });
       this.output = `Items:\n${items}`;
