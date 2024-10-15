@@ -1,5 +1,4 @@
-import { Component, output } from '@angular/core';
-import { Storage } from '@ionic/storage-angular';
+import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 
@@ -19,11 +18,10 @@ export class HomePage {
 
   constructor(private storageService: StorageService) {}
 
-
   async setItem() {
     try {
       await this.storageService.set(this.key, this.value);
-      this.output = `Set ${this.key} to ${this.value}`;
+      this.output = `Set ${this.key}: ${this.value}`;
     } catch (error) {
       console.error('Error setting item', error);
       this.output = `Error setting item: ${error}`;
