@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { EditMovieModalComponent } from 'src/app/edit-movie-modal/edit-movie-modal.component';
+import { IonHeader } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-movies',
   templateUrl: './movies.page.html',
   styleUrls: ['./movies.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, EditMovieModalComponent, IonicModule],
 })
 export class MoviesPage implements OnInit {
   movieName: string = '';
@@ -17,7 +19,7 @@ export class MoviesPage implements OnInit {
   movies: { name: string; year: string }[] = [];
   errorMessage: string = '';
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageService: StorageService, private modalController: ModalController) { }
 
   async ngOnInit() {
     await this.loadMovies();
@@ -53,6 +55,30 @@ export class MoviesPage implements OnInit {
       this.errorMessage = 'Error loading movies. Please try again.';
     }
   }
+
+  async openEditModal(movie: any, index: number) {
+    const modal = await this.modalController.create({
+      component: EditMovieModalComponent,
+      componentProps: { movie, index }
+    });
+
+    modal.onDidDismiss().then(async (result) => {
+      if (result.data) {
+        const { name, year, index } = result.data;
+        this.movies[index] = { name, year };
+        try {
+          await this.storageService.set('movies', this.movies);
+          this.errorMessage = '';
+        } catch (error) {
+          console.error('Error editing movie:', error);
+          this.errorMessage = 'Error editing movie. Please try again.';
+        }
+      }
+    });
+
+    return await modal.present();
+  }
+
 
   async deleteMovie(index: number) {
     this.movies.splice(index, 1);

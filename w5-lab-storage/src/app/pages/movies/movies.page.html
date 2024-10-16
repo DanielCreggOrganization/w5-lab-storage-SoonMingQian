@@ -18,13 +18,27 @@
   <ion-list>
     <ion-item-sliding *ngFor="let movie of movies; let i = index">
       <ion-item>
+        <ion-avatar slot="start">
+          <img src="assets/img/download.jpg" />
+        </ion-avatar>
         <ion-label>
           <h2>{{ movie.name }}</h2>
           <p>{{ movie.year }}</p>
         </ion-label>
+        <ion-chip color="primary">
+          <ion-label>{{ movie.name }}</ion-label>
+        </ion-chip>
+        <ion-badge color="secondary" slot="end">{{ movie.year }}</ion-badge>
       </ion-item>
       <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="deleteMovie(i)">Delete</ion-item-option>
+        <ion-item-option (click)="openEditModal(movie, i)">
+          <ion-icon name="create-outline"></ion-icon>
+          Edit
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteMovie(i)">
+          <ion-icon name="trash-outline"></ion-icon>
+          Delete
+        </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
