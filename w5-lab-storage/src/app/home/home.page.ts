@@ -19,6 +19,10 @@ export class HomePage {
   constructor(private storageService: StorageService) {}
 
   async setItem() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       await this.storageService.set(this.key, this.value);
       this.output = `Set ${this.key}: ${this.value}`;
@@ -29,6 +33,10 @@ export class HomePage {
   }
 
   async getItem() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       const value = await this.storageService.get(this.key);
       this.output = `Got ${this.key} as ${value}`;
@@ -39,6 +47,10 @@ export class HomePage {
   }
 
   async removeItem() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       await this.storageService.remove(this.key);
       this.output = `Removed ${this.key}`;
@@ -59,6 +71,10 @@ export class HomePage {
   }
 
   async getKeys() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       const keys = await this.storageService.keys();
       this.output = `Keys: ${keys.join(', ')}`;
@@ -69,6 +85,10 @@ export class HomePage {
   }
 
   async getLength() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       const length = await this.storageService.length();
       this.output = `Length: ${length}`;
@@ -79,6 +99,10 @@ export class HomePage {
   }
 
   async iterateItems() {
+    if(this.key === '' || this.value === '') {
+      this.output = 'Key and value are required';
+      return;
+    }
     try {
       let items = '';
       await this.storageService.forEach((value, key, index) => {
