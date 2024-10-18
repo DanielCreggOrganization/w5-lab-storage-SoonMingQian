@@ -11,7 +11,7 @@ Ionic Storage is a powerful utility provided by the Ionic Framework for storing 
 - **Cross-platform Support**: Works seamlessly on Android, iOS, and the web.
 - **Easy to Use**: Provides a simple API for storing and retrieving data.
 
-In this lab, we'll integrate Ionic Storage in an Angular standalone component. We'll explore its key features through hands-on exercises and build a simple application that demonstrates these concepts. We'll follow best practices by initializing Ionic Storage in the `app.component.ts` file and include demonstrations of error handling using try-catch blocks.
+In this lab, we'll integrate Ionic Storage in an Angular standalone component. We'll explore its key features through hands-on exercises and build a simple application that demonstrates these concepts. We'll follow best practices by initializing Ionic Storage in the `main.ts` file and include demonstrations of error handling using try-catch blocks.
 
 ---
 
@@ -19,7 +19,7 @@ In this lab, we'll integrate Ionic Storage in an Angular standalone component. W
 
 1. [Setup and Installation](#setup)
 2. [Initializing Ionic Storage](#initializing-storage)
-3. [Using Ionic Storage Without SQLite](#using-storage)
+3. [Using Ionic Storage](#using-storage)
    - [Example 1: Basic Storage Operations](#example1)
    - [DIY Exercise 1: Extending Storage Functionality](#diy1)
 4. [Creating a Storage Service](#storage-service)
@@ -71,7 +71,7 @@ We will initialize Ionic Storage in the `main.ts` file. This ensures that Storag
 ### Initialize Storage in `main.ts`
 
 ```typescript
-// src/app/app.component.ts
+// src/main.ts
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
@@ -100,7 +100,7 @@ bootstrapApplication(AppComponent, {
 ---
 
 <a name="using-storage"></a>
-## 3. Using Ionic Storage Without SQLite
+## 3. Using Ionic Storage
 
 By default, Ionic Storage uses IndexedDB, WebSQL, or localStorage depending on availability and platform. This section will focus on using Ionic Storage with its default configuration.
 
@@ -132,7 +132,9 @@ Let's create a simple example to save and retrieve data using Ionic Storage.
      value: string = '';
      output: string = '';
 
-     constructor(private storage: Storage) {}
+     constructor(private storage: Storage) {
+       storage.create();
+     }
 
      async setItem() {
        try {
@@ -214,7 +216,7 @@ Enhance the basic storage operations by implementing additional methods provided
 
 1. **Implement Additional Methods with Error Handling**
 
-   - Add methods for `remove()`, `clear()`, `keys()`, `length()`, and `forEach()`.
+   - Add methods for `remove()`, `clear()`, `keys()`, `length()`, and `forEach()`. Check out the [Ionic Storage - GitHub](https://github.com/ionic-team/ionic-storage#api) page for example usage of all these API calls.
    - Wrap each method in a `try-catch` block to handle potential errors.
    - Update the `output` property and log errors to the console.
 
@@ -253,7 +255,7 @@ Abstracting storage operations into a service promotes code reusability and main
 
    ```typescript
    // src/app/services/storage.service.ts
-   import { Injectable } from '@angular/core';
+   import { Injectable, Inject } from '@angular/core';
    import { Storage } from '@ionic/storage-angular';
 
    @Injectable({
@@ -559,17 +561,19 @@ Let's build a simple movies app that utilizes Ionic Storage without SQLite.
      <ion-button expand="full" (click)="addMovie()">Add Movie</ion-button>
 
      <ion-list>
-       <ion-item-sliding *ngFor="let movie of movies; let i = index">
-         <ion-item>
-           <ion-label>
-             <h2>{{ movie.name }}</h2>
-             <p>{{ movie.year }}</p>
-           </ion-label>
-         </ion-item>
-         <ion-item-options side="end">
-           <ion-item-option color="danger" (click)="deleteMovie(i)">Delete</ion-item-option>
-         </ion-item-options>
-       </ion-item-sliding>
+       @for (movie of movies; track movie; let i = $index) {
+         <ion-item-sliding>
+           <ion-item>
+             <ion-label>
+               <h2>{{ movie.name }}</h2>
+               <p>{{ movie.year }}</p>
+             </ion-label>
+           </ion-item>
+           <ion-item-options side="end">
+             <ion-item-option color="danger" (click)="deleteMovie(i)">Delete</ion-item-option>
+           </ion-item-options>
+         </ion-item-sliding>
+       }
      </ion-list>
 
      <ion-text color="danger" *ngIf="errorMessage">
